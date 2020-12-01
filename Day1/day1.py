@@ -9,4 +9,15 @@ def part1():
             print(f'{number} {otherNumber} {number * otherNumber}')
 
 
-part1()
+def part2():
+    sortedNumbers = sorted(numbers)
+    for number1 in sortedNumbers:
+        index = 0
+        while (sortedNumbers[index] + number1 < 2020):
+            number2 = sortedNumbers[index]
+            index = index + 1
+            number3 = 2020 - number2 - number1
+            if (number3 in numbers):
+                print(f'{number1} {number2} {number3} {number1 * number2 * number3}')            
+
+part2()
