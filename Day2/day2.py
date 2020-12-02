@@ -1,38 +1,48 @@
 import re
 
+class Line:
+    def __init__(self, lower, upper, symbol, password):
+        self.lower = lower
+        self.upper = upper
+        self.symbol = symbol
+        self.password = password
+
 pattern = re.compile('(?P<lower>[0-9]+)-(?P<upper>[0-9]+) (?P<symbol>[a-z]): (?P<password>[a-z]+)')
+lines = open('C:/personal/AdventOfCode2020/Day2/day2.txt').read().splitlines()
+
+def parseLine(str):
+    match = pattern.match(str)
+    lower = int(match.group("lower"))
+    upper = int(match.group("upper"))
+    symbol = match.group("symbol")
+    password = match.group("password")  
+
+    return Line(lower, upper, symbol, password)
+
+def lineIsValid(str, passwordPolicy):
+    line = parseLine(str)
+    return passwordPolicy(line)
+
+def passwordPolicyPart1(line):
+    occurs = line.password.count(line.symbol)
+    return (occurs >= line.lower and occurs <= line.upper)
+
+def passwordPolicyPart2(line):
+    if (line.password[line.lower - 1] == line.symbol and line.password[line.upper - 1] != line.symbol):
+        return True
+
+    if (line.password[line.lower - 1] != line.symbol and line.password[line.upper - 1] == line.symbol):
+        return True
+
+    return False        
 
 def part1():
-    validPasswords = 0
-    for line in open('C:/personal/AdventOfCode2020/Day2/day2.txt').read().splitlines():
-        match = pattern.match(line)
-        lower = int(match.group("lower"))
-        upper = int(match.group("upper"))
-        symbol = match.group("symbol")
-        password = match.group("password")
-
-        occurs = password.count(symbol)
-        if (occurs >= lower and occurs <= upper):
-            validPasswords = validPasswords + 1
-
+    validPasswords = sum(1 for line in lines if lineIsValid(line, passwordPolicyPart1))
     print(validPasswords)        
 
-
 def part2():
-    validPasswords = 0
-    for line in open('C:/personal/AdventOfCode2020/Day2/day2.txt').read().splitlines():
-        match = pattern.match(line)
-        lower = int(match.group("lower"))
-        upper = int(match.group("upper"))
-        symbol = match.group("symbol")
-        password = match.group("password")
-
-        if (password[lower - 1] == symbol and password[upper - 1] != symbol):
-            validPasswords = validPasswords + 1
-
-        if (password[lower - 1] != symbol and password[upper - 1] == symbol):
-            validPasswords = validPasswords + 1            
-
+    validPasswords = sum(1 for line in lines if lineIsValid(line, passwordPolicyPart2))
     print(validPasswords)  
 
+part1()    
 part2()    
