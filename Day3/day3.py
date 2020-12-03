@@ -1,11 +1,14 @@
-lines = open('Day3/day3.txt').read().splitlines()
+from numpy import prod
 
-def countTrees(stepX, stepY):
+lines = open('Day3/day3.txt').read().splitlines()
+forestHeight = len(lines)
+forestWidth = len(lines[0])
+
+def countTrees(step):
+    stepX, stepY = step
     currentX = 0
     currentY = 0
     treesFound = 0
-    forestHeight = len(lines)
-    forestWidth = len(lines[0])
 
     while (currentY + 1 < forestHeight):
         currentX = (currentX + stepX) % forestWidth
@@ -18,4 +21,7 @@ def countTrees(stepX, stepY):
 
     return treesFound
 
-print(countTrees(1,1) * countTrees(3,1) * countTrees(5,1) * countTrees(7,1) * countTrees(1,2))
+slopes = [ (1,1), (3,1), (5,1), (7,1), (1,2) ]
+result = prod(list(map(countTrees, slopes)))
+
+print(result)
