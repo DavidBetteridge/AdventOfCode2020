@@ -1,46 +1,61 @@
 import re
+from functools import partial
 
-def inDocument(document, fieldName):
-    return (fieldName in document)
+HCL_PATTERN = re.compile('^#[a-f0-9]{6}$')
+PID_PATTERN = re.compile('^[0-9]{9}$')
+ECL_PATTERN = re.compile('^amb|blu|brn|gry|grn|hzl|oth$')
+FIELD_TYPES = frozenset([ "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" ])
 
-#250
-def documentContainsAllFields(document):
-     return inDocument(document, "byr:") and inDocument(document, "iyr:") and inDocument(document, "eyr:") and inDocument(document, "hgt:") and inDocument(document, "hcl:") and inDocument(document, "ecl:") and inDocument(document, "pid:")
+def is_in_range(lower, upper, valueToCheck):
+    return lower <= int(valueToCheck) <= upper
 
-def ValidateBYR(valueToCheck):
-    return len(valueToCheck) == 4 and int(valueToCheck) >= 1920 and int(valueToCheck) <= 2002
+def matches_pattern(pattern, valueToCheck):
+    return pattern.match(valueToCheck) != None
 
-def ValidateIYR(valueToCheck):
-    return len(valueToCheck) == 4 and int(valueToCheck) >= 2010 and int(valueToCheck) <= 2020
-
-def ValidateEYR(valueToCheck):
-    return len(valueToCheck) == 4 and int(valueToCheck) >= 2020 and int(valueToCheck) <= 2030
-
-def ValidateHGT(valueToCheck):
+def hgt_is_valid(valueToCheck):
     if valueToCheck.endswith("cm"):
-        numeric = int(valueToCheck[:-2])
-        return numeric >= 150 and numeric <= 193
+        return is_in_range(150, 193, valueToCheck[:-2])
     elif valueToCheck.endswith("in"):
-        numeric = int(valueToCheck[:-2])
-        return numeric >= 59 and numeric <= 76
+        return is_in_range(59, 76, valueToCheck[:-2])
     else:
         return False
 
-hclPattern = re.compile('^#[a-f0-9]{6}$')
-def ValidateHCL(valueToCheck):
-    return hclPattern.match(valueToCheck) != None
+VALIDATIONS = {
+    "byr" : partial(is_in_range, 1920, 2002),
+    "iyr" : partial(is_in_range, 2010, 2020),
+    "eyr" : partial(is_in_range, 2020, 2030),
+    "hgt" : hgt_is_valid,
+    "hcl" : partial(matches_pattern, HCL_PATTERN),
+    "pid" : partial(matches_pattern, PID_PATTERN),
+    "ecl" : partial(matches_pattern, ECL_PATTERN),
+    "cid" : lambda _: True
+}
 
-def ValidateECL(valueToCheck):
-    return valueToCheck == "amb" or valueToCheck == "blu" or valueToCheck == "brn" or valueToCheck == "gry" or valueToCheck == "grn" or valueToCheck == "hzl" or valueToCheck == "oth"
+def load_documents() :
+    documents = []
+    currentDocument = ""
+    for line in open('Day4/day4.txt').read().splitlines():
+        if (line == ""):
+            documents.append(currentDocument)
+            currentDocument = ""
+        else:
+            currentDocument = currentDocument + " " + line
+    documents.append(currentDocument)
 
-pidPattern = re.compile('^[0-9]{9}$')
-def ValidatePID(valueToCheck):
-    return pidPattern.match(valueToCheck) != None
+    return documents 
+
+def field_in_document(document, fieldType):
+    return (fieldType + ':' in document)
+
+
+def document_contains_all_fields(document):
+    for fieldType in FIELD_TYPES:
+        if not field_in_document(document, fieldType):
+            return False
+    return True
 
 def documentIsValid(document):
-
-    if documentContainsAllFields(document):
-
+    if document_contains_all_fields(document):
         fields = document.split(' ')
         for field in fields:
             parts = field.split(':')
@@ -48,54 +63,17 @@ def documentIsValid(document):
                 fieldName = parts[0]
                 fieldValue = parts[1]
 
-                if (fieldName == "byr") and not ValidateBYR(fieldValue):
+                if (not VALIDATIONS[fieldName](fieldValue) ):
                     return False
-
-                if (fieldName == "iyr") and not ValidateIYR(fieldValue):
-                    return False
-
-                if (fieldName == "eyr") and not ValidateEYR(fieldValue):
-                    return False             
-
-                if (fieldName == "hgt") and not ValidateHGT(fieldValue):
-                    return False      
-
-                if (fieldName == "hcl") and not ValidateHCL(fieldValue):
-                    return False      
-
-                if (fieldName == "ecl") and not ValidateECL(fieldValue):
-                    return False   
-
-                if (fieldName == "pid") and not ValidatePID(fieldValue):
-                    return False  
-
         return True
     else:
         return False
 
 
-    fields = document.split(' ')
-    print()
-
-    return inDocument(document, "byr:") and inDocument(document, "iyr:") and inDocument(document, "eyr:") and inDocument(document, "hgt:") and inDocument(document, "hcl:") and inDocument(document, "ecl:") and inDocument(document, "pid:")
-
-documents = []
-currentDocument = ""
-for line in open('Day4/day4.txt').read().splitlines():
-    if (line == ""):
-        documents.append(currentDocument)
-        currentDocument = ""
-    else:
-        currentDocument = currentDocument + " " + line
-documents.append(currentDocument)
-
+documents = load_documents()
 validDocuments = 0
 for document in documents:
     if (documentIsValid(document)):
         validDocuments = validDocuments + 1
 
-
 print(validDocuments)
-
-# for document in documents:
-#     if missingFromDocument(document, "byr")
