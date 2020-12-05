@@ -5,6 +5,14 @@ def calculate_seatId(line):
     seat = int(seatBinary, 2)
     return (row * 8) + seat
 
-lines = open('Day5/day5.txt').read().splitlines()
-highestSeatId = max(map(calculate_seatId,lines))
+boardingPasses = open('Day5/day5.txt').read().splitlines()
+seatIds = list(map(calculate_seatId, boardingPasses))
+highestSeatId = max(seatIds)
 print(highestSeatId)
+
+for row in range(int('0000001',2), int('1111110',2)):
+    for column in range(0,7):
+        seatId = (row * 8) + column
+        if not seatId in seatIds:
+            if (seatId - 1 in seatIds) and (seatId + 1 in seatIds):
+                print(seatId)
