@@ -1,26 +1,19 @@
-def part(fn):
-    total = 0
-    currentSet = set()
-    newGroup = True
-    for line in open('Day6/day6.txt').read().splitlines():
-        if (line == ""):
-            total += len(currentSet)
-            currentSet = set()
-            newGroup = True
-        else:
-            if (newGroup):
-                currentSet = set(list(line))
-                newGroup = False
-            else:                
-                currentSet = fn(currentSet, set(list(line)) )
-    total += len(currentSet)
-    return total
+from functools import reduce
+
+groups = open('Day6/day6.txt').read().split('\n\n')
+
+def solve(fn):
+    def solve_group(group):
+        people = map(set, group.split('\n'))
+        return len(reduce(lambda p1, p2 : fn(p1, p2), people))
+
+    return sum(map(solve_group, groups))
 
 def part1():
-    print(part(lambda x, y: x.union(y)))
+    print(solve(lambda x, y: x | y))
 
 def part2():
-    print(part(lambda x, y: x.intersection(y)))
+    print(solve(lambda x, y: x & y))
 
 part1()     #6585
 part2()     #3276
