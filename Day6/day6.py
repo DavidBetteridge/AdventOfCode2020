@@ -1,22 +1,38 @@
-def load_answers() :
-    documents = []
-    currentDocument = ""
+def part1():
+    total = 0
+    currentSet = set()
     for line in open('Day6/day6.txt').read().splitlines():
         if (line == ""):
-            documents.append(currentDocument)
-            currentDocument = ""
+            total += len(currentSet)
+            currentSet = set()
         else:
-            currentDocument = currentDocument + line
-    documents.append(currentDocument)
-    return documents
+            if (len(currentSet) == 0):
+                currentSet = set(list(line))
+            else:                
+                currentSet = currentSet.union(set(list(line)))
+    total += len(currentSet)
 
-groups = load_answers()   
+    print(total)
 
-total = 0
-for answers in groups:
-    letters = list(answers)
-    distinctLetters = set(letters)
-    numberOfLetters = len(distinctLetters)
-    total += numberOfLetters
+def part2():
+    total = 0
+    currentSet = set()
+    newGroup = True
+    for line in open('Day6/day6.txt').read().splitlines():
+        if (line == ""):
+            total += len(currentSet)
+            currentSet = set()
+            newGroup = True
+        else:
+            if (newGroup):
+                currentSet = set(list(line))
+                newGroup = False
+            else:                
+                currentSet = currentSet.intersection(set(list(line)))
+    total += len(currentSet)
 
-print(total)
+    print(total)
+
+
+part1()     #6585
+part2()     #3323 too high
