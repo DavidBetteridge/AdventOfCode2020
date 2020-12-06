@@ -1,20 +1,4 @@
-def part1():
-    total = 0
-    currentSet = set()
-    for line in open('Day6/day6.txt').read().splitlines():
-        if (line == ""):
-            total += len(currentSet)
-            currentSet = set()
-        else:
-            if (len(currentSet) == 0):
-                currentSet = set(list(line))
-            else:                
-                currentSet = currentSet.union(set(list(line)))
-    total += len(currentSet)
-
-    print(total)
-
-def part2():
+def part(fn):
     total = 0
     currentSet = set()
     newGroup = True
@@ -28,11 +12,15 @@ def part2():
                 currentSet = set(list(line))
                 newGroup = False
             else:                
-                currentSet = currentSet.intersection(set(list(line)))
+                currentSet = fn(currentSet, set(list(line)) )
     total += len(currentSet)
+    return total
 
-    print(total)
+def part1():
+    print(part(lambda x, y: x.union(y)))
 
+def part2():
+    print(part(lambda x, y: x.intersection(y)))
 
 part1()     #6585
-part2()     #3323 too high
+part2()     #3276
