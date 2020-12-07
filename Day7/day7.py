@@ -16,28 +16,23 @@ for rule in open('Day7/day7.txt').read().splitlines():
 def bag_can_contain_gold(outer_bag):
     if outer_bag == "none": return False
 
-    for inner in rules[outer_bag]:
-        qty, colour = inner
-        if (colour == "shiny gold"):
-            return True
-        elif (bag_can_contain_gold(colour)):
-            return True
-    return False
+    def worker(inner):
+        _, colour = inner
+        return colour == "shiny gold" or bag_can_contain_gold(colour) 
 
-def part_one():
-    total = 0
-    for outer in rules:
-        if bag_can_contain_gold(outer):
-            total += 1
-    print(total)    
+    return any([True for inner in rules[outer_bag] if worker(inner)])
 
 def count_inner_bags(outer_bag):
     if outer_bag == "none": return 0
 
-    total = 0
-    for inner in rules[outer_bag]:
+    def worker(inner):
         qty, colour = inner
-        total += qty + (qty * count_inner_bags(colour))
-    return total
+        return qty + (qty * count_inner_bags(colour))        
 
-print(count_inner_bags("shiny gold"))
+    return sum(map(worker,  rules[outer_bag]))
+
+def part_one():
+    return sum([1 for outer in rules if bag_can_contain_gold(outer)])
+
+def part_two():
+    return count_inner_bags("shiny gold")

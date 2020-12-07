@@ -69,11 +69,18 @@ def documentIsValid(document):
     else:
         return False
 
+def part_one():
+    documents = load_documents()
+    validDocuments = 0
+    for document in documents:
+        if (document_contains_all_fields(document)):
+            validDocuments = validDocuments + 1
+    return validDocuments
 
-documents = load_documents()
-validDocuments = 0
-for document in documents:
-    if (documentIsValid(document)):
-        validDocuments = validDocuments + 1
-
-print(validDocuments)
+def part_two():
+    documents = load_documents()
+    validDocuments = 0
+    for document in documents:
+        if (documentIsValid(document)):
+            validDocuments = validDocuments + 1
+    return validDocuments

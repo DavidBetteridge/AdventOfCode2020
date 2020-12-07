@@ -36,13 +36,8 @@ def passwordPolicyPart2(line):
 
     return False        
 
-def part1():
-    validPasswords = sum(1 for line in lines if lineIsValid(line, passwordPolicyPart1))
-    print(validPasswords)        
+def part_one():
+    return sum(1 for line in lines if lineIsValid(line, passwordPolicyPart1))
 
-def part2():
-    validPasswords = sum(1 for line in lines if lineIsValid(line, passwordPolicyPart2))
-    print(validPasswords)  
-
-part1()    
-part2()    
+def part_two():
+    return sum(1 for line in lines if lineIsValid(line, passwordPolicyPart2))

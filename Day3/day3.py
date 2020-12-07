@@ -21,7 +21,9 @@ def countTrees(step):
 
     return treesFound
 
-slopes = [ (1,1), (3,1), (5,1), (7,1), (1,2) ]
-result = prod(list(map(countTrees, slopes)))
+def part_one():
+    return countTrees((3,1))
 
-print(result)
+def part_two():
+    slopes = [ (1,1), (3,1), (5,1), (7,1), (1,2) ]
+    return prod(list(map(countTrees, slopes)))
