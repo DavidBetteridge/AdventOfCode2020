@@ -8,7 +8,7 @@ class Line:
         self.password = password
 
 pattern = re.compile('(?P<lower>[0-9]+)-(?P<upper>[0-9]+) (?P<symbol>[a-z]): (?P<password>[a-z]+)')
-lines = open('C:/personal/AdventOfCode2020/Day2/day2.txt').read().splitlines()
+lines = open('Day2/day2.txt').read().splitlines()
 
 def parseLine(str):
     match = pattern.match(str)

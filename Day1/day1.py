@@ -1,5 +1,5 @@
 numbers = {} 
-for line in open('C:/personal/AdventOfCode2020/Day1/day1.txt').read().splitlines():
+for line in open('Day1/day1.txt').read().splitlines():
     numbers[int(line)] = int(line)
 
 def part_one():
