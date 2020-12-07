@@ -24,11 +24,20 @@ def bag_can_contain_gold(outer_bag):
             return True
     return False
 
-total = 0
-for outer in rules:
-    if bag_can_contain_gold(outer):
-        total += 1
+def part_one():
+    total = 0
+    for outer in rules:
+        if bag_can_contain_gold(outer):
+            total += 1
+    print(total)    
 
-print(total)    
+def count_inner_bags(outer_bag):
+    if outer_bag == "none": return 0
 
- 
+    total = 0
+    for inner in rules[outer_bag]:
+        qty, colour = inner
+        total += qty + (qty * count_inner_bags(colour))
+    return total
+
+print(count_inner_bags("shiny gold"))
