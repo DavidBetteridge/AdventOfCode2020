@@ -23,25 +23,27 @@ def run_program():
             instructionPointer += operand
 
     infiniteLoop = instructionPointer < len(commands)
-    return infiniteLoop, accumulator
+    return infiniteLoop, accumulator, seenCommands
 
 def part_one():
-    _, accumulator = run_program()
+    _, accumulator, _ = run_program()
     return accumulator
 
 def part_two():
+    _, _, seen = run_program()
+
     for commandNumber in range(0, len(commands)):
+        if commandNumber in seen:
+            originalInstruction, operand = commands[commandNumber]
+            if (originalInstruction != 'acc'):
+                if (originalInstruction == 'nop'):
+                    commands[commandNumber] = ('jmp', operand)
 
-        originalInstruction, operand = commands[commandNumber]
-        if (originalInstruction != 'acc'):
-            if (originalInstruction == 'nop'):
-                commands[commandNumber] = ('jmp', operand)
+                if (originalInstruction == 'jmp'):
+                    commands[commandNumber] = ('nop', operand)
+            
+                infiniteLoop, accumulator, _ = run_program()
+                if not infiniteLoop:
+                    return accumulator
 
-            if (originalInstruction == 'jmp'):
-                commands[commandNumber] = ('nop', operand)
-        
-            infiniteLoop, accumulator = run_program()
-            if not infiniteLoop:
-                return accumulator
-
-            commands[commandNumber] = (originalInstruction, operand)
+                commands[commandNumber] = (originalInstruction, operand)
