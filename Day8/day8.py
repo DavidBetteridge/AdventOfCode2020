@@ -26,25 +26,22 @@ def run_program():
     return infiniteLoop, accumulator
 
 def part_one():
-    infiniteLoop, accumulator = run_program()
-    print(accumulator)  #1810
+    _, accumulator = run_program()
+    return accumulator
 
 def part_two():
-    
     for commandNumber in range(0, len(commands)):
 
         originalInstruction, operand = commands[commandNumber]
-        if (originalInstruction == 'nop'):
-            commands[commandNumber] = ('jmp', operand)
-
-        if (originalInstruction == 'jmp'):
-            commands[commandNumber] = ('nop', operand)
-
         if (originalInstruction != 'acc'):
+            if (originalInstruction == 'nop'):
+                commands[commandNumber] = ('jmp', operand)
+
+            if (originalInstruction == 'jmp'):
+                commands[commandNumber] = ('nop', operand)
+        
             infiniteLoop, accumulator = run_program()
             if not infiniteLoop:
-                print(accumulator)
-                break
-            commands[commandNumber] = (originalInstruction, operand)
+                return accumulator
 
-part_two()        
+            commands[commandNumber] = (originalInstruction, operand)
