@@ -9,10 +9,34 @@ def check_number(window, number_to_check):
 
 numbers = list(map(int, open('Day9/day9.txt').read().splitlines()))
 
-for i in range(WINDOW_SIZE, len(numbers)):
-    window = numbers[i-WINDOW_SIZE:i]
-    number_to_check = numbers[i]
-    if not check_number(window, number_to_check):
-        print(number_to_check)
+def part_one():
+    for i in range(WINDOW_SIZE, len(numbers)):
+        window = numbers[i-WINDOW_SIZE:i]
+        number_to_check = numbers[i]
+        if not check_number(window, number_to_check):
+            return number_to_check
+
+def find_range(targetNumber):
+    for i in range(0, len(numbers)):
+        running_total = 0
+        offset = 0
+        while running_total < targetNumber:
+            running_total += numbers[i + offset]
+            offset += 1
+
+        if running_total == targetNumber:
+            return numbers[i:i+offset]
+
+def part_two():
+    part1 = part_one()
+    window = find_range(part1)
+    return min(window) + max(window)
+
+print(part_one())
+print(part_two())
+
+
+
+
 
     
