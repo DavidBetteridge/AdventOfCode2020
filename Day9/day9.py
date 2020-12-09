@@ -31,12 +31,3 @@ def part_two():
     part1 = part_one()
     window = find_range(part1)
     return min(window) + max(window)
-
-print(part_one())
-print(part_two())
-
-
-
-
-
-    
