@@ -1,5 +1,5 @@
 commands = []
-for command in open('Day8/day8.txt').read().splitlines():
+for command in open('Day08/day8.txt').read().splitlines():
     instruction, operand = command.split(' ')    
     commands.append( (instruction, int(operand)) )
 

@@ -9,7 +9,7 @@ def extract_colour(str):
         return Rule(quantity_and_colour)
 
 rules = {}
-for rule in open('Day7/day7.txt').read().splitlines():
+for rule in open('Day07/day7.txt').read().splitlines():
     outer_bag, inner_bags = rule.split(' bags contain ')
     rules[outer_bag] = list(x for x in map(extract_colour, inner_bags.split(', ')) if x != None)
 

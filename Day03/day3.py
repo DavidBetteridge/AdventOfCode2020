@@ -1,6 +1,6 @@
 from numpy import prod
 
-lines = open('Day3/day3.txt').read().splitlines()
+lines = open('Day03/day3.txt').read().splitlines()
 forestHeight = len(lines)
 forestWidth = len(lines[0])
 

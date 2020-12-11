@@ -1,5 +1,5 @@
 import unittest
-import Day2.day2 as day
+import Day02.day2 as day
 
 class Day2Tests(unittest.TestCase):
     def test_day_2_part_one(self):

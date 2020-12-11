@@ -7,7 +7,7 @@ def check_number(window, number_to_check):
             return True
     return False
 
-numbers = list(map(int, open('Day9/day9.txt').read().splitlines()))
+numbers = list(map(int, open('Day09/day9.txt').read().splitlines()))
 
 def part_one():
     for i in range(WINDOW_SIZE, len(numbers)):

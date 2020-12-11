@@ -34,7 +34,7 @@ VALIDATIONS = {
 def load_documents() :
     documents = []
     currentDocument = ""
-    for line in open('Day4/day4.txt').read().splitlines():
+    for line in open('Day04/day4.txt').read().splitlines():
         if (line == ""):
             documents.append(currentDocument)
             currentDocument = ""

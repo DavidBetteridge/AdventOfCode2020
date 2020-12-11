@@ -1,4 +1,4 @@
-seatIds = list(map(lambda line: int(line.replace('B','1').replace('F','0').replace('R','1').replace('L','0'), 2), open('Day5/day5.txt').read().splitlines()))
+seatIds = list(map(lambda line: int(line.replace('B','1').replace('F','0').replace('R','1').replace('L','0'), 2), open('Day05/day5.txt').read().splitlines()))
 
 def part_one():
     return max(seatIds)

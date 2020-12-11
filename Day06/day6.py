@@ -1,7 +1,7 @@
 import operator
 from functools import reduce
 
-groups = open('Day6/day6.txt').read().split('\n\n')
+groups = open('Day06/day6.txt').read().split('\n\n')
 
 def solve(fn):
     return sum(map(lambda group: len(reduce(lambda p1, p2 : fn(p1, p2), map(set, group.split('\n')))), groups))
