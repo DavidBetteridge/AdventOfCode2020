@@ -16,6 +16,8 @@ def part_one():
         if lines[i + 1] - lines[i] == 3:
             threeCount += 1
 
+    zip(lines, lines)
+
     return oneCount * threeCount
     #2170
     #zip might be better
@@ -36,4 +38,5 @@ def part_two():
 
     return numberOfRoots[0]
 
+print(part_one())    
 print(part_two())    
