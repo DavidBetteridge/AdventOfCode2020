@@ -135,15 +135,18 @@ def mutate_grid(seatsFunction, minOccupiedSeatCount, currentGrid):
     for r in range(0, rows):
         row = ""
         for c in range(0, columns):
-            n = seatsFunction(c,r,currentGrid)
-            if n.count('#') == 0 and currentGrid[r][c] == 'L':
-                row += '#'
-                changed = True
-            elif currentGrid[r][c] == '#' and n.count('#') >= minOccupiedSeatCount:
-                row += 'L'
-                changed = True
+            if currentGrid[r][c] == '.':
+                row += '.'
             else:
-                row += currentGrid[r][c]
+                n = seatsFunction(c,r,currentGrid)
+                if currentGrid[r][c] == 'L' and n.count('#') == 0:
+                    row += '#'
+                    changed = True
+                elif currentGrid[r][c] == '#' and n.count('#') >= minOccupiedSeatCount:
+                    row += 'L'
+                    changed = True
+                else:
+                    row += currentGrid[r][c]
         newGrid.append(row)
     return (newGrid, changed)
 
@@ -160,15 +163,8 @@ def part_one(grid):
 
 def part_two(grid):
     changed = True
-
     while changed:
         grid, changed = mutate_grid(visible_seats, 5, grid)        
-
-        count = 0
-        for row in grid:
-            count += row.count('#')        
-        print(count)
-
 
     count = 0
     for row in grid:
@@ -178,3 +174,4 @@ def part_two(grid):
 
 print(part_two(grid))
 #2329
+#2138
