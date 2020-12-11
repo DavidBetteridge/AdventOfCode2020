@@ -1,3 +1,5 @@
+import sys, pygame, colorsys
+
 DIRECTIONS = [ (-1,-1), (0,-1), (1,-1),
                (-1, 0),         (1, 0),
                (-1, 1), (0, 1), (1, 1) ]
@@ -57,3 +59,38 @@ def part_one():
 
 def part_two():
     return solver(visible_seats, 5)
+
+def main():
+    pygame.init()
+    cellSize = 10
+    size = (columns * cellSize), (rows * cellSize)
+    screen = pygame.display.set_mode(size)
+    red = pygame.Color(255,0,0)    
+    green = pygame.Color(0,255,0)  
+
+    workingGrid = grid
+
+    next_generation_event = pygame.USEREVENT + 1
+    pygame.time.set_timer(next_generation_event, 100)
+
+    while (True):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == next_generation_event:
+                workingGrid, _ = mutate_grid(visible_seats, 5, workingGrid)   
+    
+                for c in range(0, columns):
+                    for r in range(0, rows):
+                        if workingGrid[r][c] == '#':                            
+                            pygame.draw.rect(screen, green, (c*cellSize,r*cellSize,cellSize,cellSize))  
+
+                        if workingGrid[r][c] == 'L':                            
+                            pygame.draw.rect(screen, red, (c*cellSize,r*cellSize,cellSize,cellSize))  
+
+                pygame.display.update()
+
+if __name__ == '__main__':
+    main()    
