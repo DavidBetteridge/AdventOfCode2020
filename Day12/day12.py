@@ -1,41 +1,85 @@
 moves = open('Day12/day12.txt').read().splitlines()
 
-x = 0
-y = 0
-direction = 90
+def part_one():
+    x = 0
+    y = 0
+    direction = 90
 
-for move in moves:
-    action = move[0]
-    amount = int(move[1:])
-    if action == 'N':
-        y += amount
-    elif action == 'S':
-        y -= amount        
-    elif action == 'E':
-        x += amount
-    elif action == 'W':
-        x -= amount                
-    elif action == 'R':
-        direction = (direction + amount)  % 360                      
-    elif action == 'L':
-        direction = direction - amount
-        if direction < 0: direction += 360
-    elif action == 'F':
-        if direction == 0:
+    for move in moves:
+        action = move[0]
+        amount = int(move[1:])
+        if action == 'N':
             y += amount
-        elif direction == 90:            
+        elif action == 'S':
+            y -= amount        
+        elif action == 'E':
             x += amount
-        elif direction == 180:            
-            y -= amount
-        elif direction == 270:            
-            x -= amount                        
+        elif action == 'W':
+            x -= amount                
+        elif action == 'R':
+            direction = (direction + amount)  % 360                      
+        elif action == 'L':
+            direction = direction - amount
+            if direction < 0: direction += 360
+        elif action == 'F':
+            if direction == 0:
+                y += amount
+            elif direction == 90:            
+                x += amount
+            elif direction == 180:            
+                y -= amount
+            elif direction == 270:            
+                x -= amount                        
+            else:
+                print(f"Unknown direction {direction}")
         else:
-            print(f"Unknown direction {direction}")
-    else:
-        print("Unknown action")            
+            print("Unknown action")            
 
-   # print(f"x={x} y={y} direction={direction}")
+    # print(f"x={x} y={y} direction={direction}")
 
-print (abs(x) + abs(y))        
+    print (abs(x) + abs(y))        
 
-#5816 to high
+
+def part_two():
+    shipX = 0
+    shipY = 0
+    waypointX = 10
+    waypointY = 1
+
+    for move in moves:
+        action = move[0]
+        amount = int(move[1:])
+        if action == 'N':
+            waypointY += amount
+        elif action == 'S':
+            waypointY -= amount        
+        elif action == 'E':
+            waypointX += amount
+        elif action == 'W':
+            waypointX -= amount  
+
+        elif action == 'L':
+            while amount > 0:
+                waypointX, waypointY = (-waypointY, waypointX)
+                amount -= 90
+            
+        elif action == 'R':
+            while amount > 0:
+                waypointX, waypointY = (waypointY, -waypointX)
+                amount -= 90
+                
+        elif action == 'F':
+            shipX += amount * waypointX
+            shipY += amount * waypointY
+        else:
+            print(f"Unknown action {action}")            
+
+        print(f"shipX={shipX} shipY={shipY} waypointX={waypointX} waypointY={waypointY}")
+
+    print (abs(shipX) + abs(shipY))        
+
+
+part_two()
+
+
+#24794 low
