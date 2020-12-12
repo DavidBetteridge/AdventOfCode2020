@@ -36,9 +36,7 @@ def part_one():
             print("Unknown action")            
 
     # print(f"x={x} y={y} direction={direction}")
-
-    print (abs(x) + abs(y))        
-
+    return abs(x) + abs(y)
 
 def part_two():
     shipX = 0
@@ -74,12 +72,5 @@ def part_two():
         else:
             print(f"Unknown action {action}")            
 
-        print(f"shipX={shipX} shipY={shipY} waypointX={waypointX} waypointY={waypointY}")
-
-    print (abs(shipX) + abs(shipY))        
-
-
-part_two()
-
-
-#24794 low
+        #print(f"shipX={shipX} shipY={shipY} waypointX={waypointX} waypointY={waypointY}")
+    return abs(shipX) + abs(shipY)
