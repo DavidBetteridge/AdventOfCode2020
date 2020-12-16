@@ -94,14 +94,14 @@ while progress:
                         progress = True
 
 result = 1
+myTicketFields = list(map(int, myTicket.split(',')))
 for ticketClass in classes:                        
-    print(ticketClass.name, ticketClass.possible_fields[0])
     if ticketClass.name.startswith("departure"):
-        result = result * ticketClass.possible_fields[0]
-
+        fieldNumber = ticketClass.possible_fields[0]
+        result *= myTicketFields[fieldNumber]
 print(result)        
 
-# 304304 low
+# 756000 low
 
 # departure location 2
 # departure station 4
