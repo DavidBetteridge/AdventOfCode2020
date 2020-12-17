@@ -100,12 +100,3 @@ for ticketClass in classes:
         fieldNumber = ticketClass.possible_fields[0]
         result *= myTicketFields[fieldNumber]
 print(result)        
-
-# 756000 low
-
-# departure location 2
-# departure station 4
-# departure platform 14
-# departure track 19
-# departure date 11
-# departure time 13
