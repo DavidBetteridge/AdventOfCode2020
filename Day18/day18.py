@@ -1,95 +1,56 @@
-# class N:
-#     def __init__(self, num):
-#         self.number = num
-
-#     def __radd__(self, other):
-#         if isinstance(other, self.__class__):
-#             return self.number + other.number
-#         else:
-#             return self.number + other
-
-#     def __add__(self, other):
-#         if isinstance(other, self.__class__):
-#             return self.number + other.number
-#         else:
-#             return self.number + other
-
-#     def __sub__(self, other):
-#         if isinstance(other, self.__class__):
-#             return self.number * other.number
-#         else:
-#             return self.number * other
-
-# lines = open('Day18/day18.txt').read().splitlines()
-
-# #line = "1 + (2 * 3) + (4 * (5 + 6))"
-# line = "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"
-
-# for i in range(0,10):
-#     line = line.replace(str(i), f"N({str(i)})")
-
-# line = line.replace("*", "-")    
-
-# print(eval(line))
-
 def location_of_closing_bracket(line, index):
-    index+=1
     openBrackets = 1
     while openBrackets != 0:
+        index +=1
         if line[index] == ')':
             openBrackets -= 1
         elif line[index] == '(':
             openBrackets += 1
-        index +=1
     return index
 
-def evalulate_line(line):
-    
-    runningTotal = 0
+def location_of_number_to_left(line, index):
+    while line[index] not in ['0','1','2','3','4','5','6','7','8','9']:
+        index -= 1
+    while index >= 0 and line[index] in ['0','1','2','3','4','5','6','7','8','9']:
+        index -= 1    
+    return index + 1
+
+
+def location_of_number_to_right(line, index):
+    while line[index] not in ['0','1','2','3','4','5','6','7','8','9']:
+        index += 1
+    while index < len(line) and line[index] in ['0','1','2','3','4','5','6','7','8','9']:
+        index += 1    
+    return index - 1
+
+def solve_expression(line):
+    expression_without_brackets = ""
     index = 0
-    operator = ""
-    while index < len(line):    
-        if line[index] == '(':
-            closing = location_of_closing_bracket(line, index)
-            nextValue = evalulate_line(line[index+1:closing-1])
-
-            if operator == "":
-                runningTotal = nextValue
-            elif operator == "+":
-                runningTotal += nextValue
-            elif operator == "*":
-                runningTotal *= nextValue
-
-            index = closing + 1
-        elif line[index] == ')':
-            print("oh")    
-        elif line[index] == '+':
-            operator = "+"
+    while index < len(line):
+        if line[index] == ' ':
             index += 1
-        elif line[index] == '*':
-            operator = "*"
+        elif line[index] != '(':
+            expression_without_brackets += line[index]
             index += 1
-        elif line[index] == ' ':
-            index += 1            
-        elif int(line[index]) in [0,1,2,3,4,5,6,7,8,9]:
-            if operator == "":
-                runningTotal = int(line[index])
-            elif operator == "+":
-                runningTotal += int(line[index])
-            elif operator == "*":
-                runningTotal *= int(line[index])        
-            index += 1                    
+        else:
+            close = location_of_closing_bracket(line, index)
+            expression_without_brackets += solve_expression(line[index+1:close])
+            index = close + 1
 
-    print(f"{line} = {runningTotal}")
-    return runningTotal      
+    # Expression now has no bracket
+    plusLocation = expression_without_brackets.find("+")
+    while plusLocation != -1:
+        lhsLocation = location_of_number_to_left(expression_without_brackets, plusLocation)
+        rhsLocation = location_of_number_to_right(expression_without_brackets, plusLocation)
+        lhs = expression_without_brackets[lhsLocation:plusLocation]
+        rhs = expression_without_brackets[plusLocation+1:rhsLocation+1]
+        total = int(lhs) + int(rhs)
+        expression_without_brackets = expression_without_brackets[:lhsLocation]+str(total)+expression_without_brackets[rhsLocation+1:]
+        plusLocation = expression_without_brackets.find("+")
 
-lines = open('Day18/day18.txt').read().splitlines()
+    return str(eval(expression_without_brackets))
 
-result = 0
-for line in lines:
-     result += evalulate_line(line)
-print(result)     
+def solve(line):
+    return int(solve_expression(line))
 
-
-
-
+print(sum(map(solve, open('Day18/day18.txt').read().splitlines())))
