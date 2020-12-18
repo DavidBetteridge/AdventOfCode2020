@@ -84,3 +84,4 @@ def solve_part_two(line):
 
 print(sum(map(solve_part_one, open('Day18/day18.txt').read().splitlines())))
 print(sum(map(solve_part_two, open('Day18/day18.txt').read().splitlines())))
+
