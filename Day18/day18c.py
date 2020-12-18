@@ -1,6 +1,9 @@
 
 # PRECEDENCES = { '^':4, '*':3, '/':3, '+':2, '-':2 }
-PRECEDENCES = { '^':4, '+':3, '/':3, '*':2, '-':2 }
+
+PRECEDENCES = { '+':2, '*':2 } #Part 1
+#PRECEDENCES = { '+':3, '*':2 } #Part 2
+
 
 ASSOCIATIVITY = { '^':'RIGHT', '*':'LEFT', '/':'LEFT', '+':'LEFT', '-':'LEFT'  }
 
@@ -17,7 +20,7 @@ def is_operator(c):
 def move_operator(operatorStack, c):
     if len(operatorStack) == 0: return False
 
-    topOperator = operatorStack[len(operatorStack) - 1]
+    topOperator = operatorStack[-1]
     if topOperator == '(': return False
 
     return (higher_precedence(topOperator, c) or (equal_precedence(topOperator, c) and ASSOCIATIVITY[topOperator] == 'LEFT'))
@@ -31,9 +34,9 @@ def evaluate(line):
         elif c == '(':        
             operatorStack.append(c)
         elif c == ')':        
-            while len(operatorStack) > 0 and operatorStack[len(operatorStack) - 1] != '(': 
+            while len(operatorStack) > 0 and operatorStack[-1] != '(': 
                 outputQueue.append(operatorStack.pop())
-            if len(operatorStack) > 0 and operatorStack[len(operatorStack) - 1] == '(':   
+            if len(operatorStack) > 0 and operatorStack[-1] == '(':   
                 operatorStack.pop()          
         elif is_operator(c): 
             while move_operator(operatorStack, c):
