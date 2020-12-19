@@ -33,7 +33,10 @@ def tidy_rule(ruleNumber):
             if not subRuleNumbers in tidyRules:
                 tidyRules[subRuleNumbers] = tidy_rule(subRuleNumbers)
             pred += tidyRules[subRuleNumbers]
-        parts.append('(' + pred + ')')            
+
+        if len(pred) > 1:
+            pred = '(' + pred + ')'         
+        parts.append(pred)            
     rule = '|'.join(parts)
 
     if len(parts) > 1:
@@ -51,15 +54,18 @@ for rule in rules:
 rule42 = tidyRules['42']
 rule31 = tidyRules['31']
 rule8 = f"({rule42})+"
-rule11 = f"({rule42})+({rule31})+"
-rule0 = '(' + rule8 + ')' + '(' + rule11 + ')'
-
-pattern = re.compile('^' + rule0 + '$')
-
 result = 0
-for image in images:
-    if pattern.match(image):
-        result += 1
+
+for i in range(1, 5):
+    rule11 = f"({rule42}){{{i}}}({rule31}){{{i}}}"
+    rule0 = '(' + rule8 + ')' + '(' + rule11 + ')'
+    pattern = re.compile('^' + rule0 + '$')
+
+    for image in images:
+        if pattern.match(image):
+            result += 1
+
+
 print(result)        
 
 #267 too high
