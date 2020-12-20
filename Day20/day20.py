@@ -8,17 +8,11 @@ class Tile:
     def rotate(self):
         self.Lines = list(zip(*self.Lines[::-1]))
 
-    def flip_h(self):
-        self.Lines = [ l[::-1] for l in self.Lines]
-
     def flip_v(self):
         self.Lines = self.Lines[::-1]
 
     def __repr__(self):
         return str(self.TileId)
-
-    def __str__(self):
-        return f"TileId : {self.TileId} {self.Lines}"
 
     def top_border(self):
         return ''.join(self.Lines[0])
@@ -38,13 +32,6 @@ class Tile:
             result += l[-1]
         return ''.join(result)
 
-    def all_borders(self):
-        return set([ self.top_border(), self.top_border()[::-1], 
-                 self.bottom_border(), self.bottom_border()[::-1],
-                 self.left_border(), self.left_border()[::-1],
-                 self.right_border(), self.right_border()[::-1] 
-               ])
-
     def remove_border(self):
         self.Lines = [ l[1:-1]  for l in self.Lines[1:-1] ]
 
@@ -63,60 +50,52 @@ def read_file():
         tiles[tileId] = tile
     return tiles        
 
-def find_matches(tiles, tile, edge):
-    result = []
+def edge_has_matches(tiles, tileId, edge):
     for otherTile in tiles.values():
-        if otherTile.TileId != tile.TileId:
-            if edge in otherTile.all_borders():
-                result.append(otherTile.TileId)
-    return result
+        if otherTile.TileId != tileId:
+            if edge in [ otherTile.top_border(), otherTile.top_border()[::-1], 
+                         otherTile.bottom_border(), otherTile.bottom_border()[::-1],
+                         otherTile.left_border(), otherTile.left_border()[::-1],
+                         otherTile.right_border(), otherTile.right_border()[::-1] 
+                       ]:
+                return True
+    return False
 
 def find_top_left_corner(tiles):
     for tile in tiles.values():
-        if len(find_matches(tiles, tile, tile.top_border())) == 0 and len(find_matches(tiles, tile, tile.left_border())) == 0:
+        if not edge_has_matches(tiles, tile.TileId, tile.top_border()) and not edge_has_matches(tiles, tile.TileId, tile.left_border()):
             return tile
     return None
 
-def find_match_left_edge(tiles, edgeToMatch):
+def find_matching_edge(tiles, edgeToMatch, fn):
     for tileId in tiles:
         tile = tiles[tileId]
-        for _ in range(4):
-            if tile.left_border() == edgeToMatch:
-                return tile
-            tile.rotate()        
-        tile.flip_h()
-        for _ in range(4):
-            if tile.left_border() == edgeToMatch:
-                return tile
-            tile.rotate()        
+
+        for _ in range(2):
+            for _ in range(4):
+                if fn(tile) == edgeToMatch:
+                    return tile
+                tile.rotate()        
+            tile.flip_v()
 
     return None
 
-def find_match_top_edge(tiles, edgeToMatch):
-    for tileId in tiles:
-        tile = tiles[tileId]
-        for _ in range(5):
-            if tile.top_border() == edgeToMatch:
-                return tile
+def find_matching_left_edge(tiles, edgeToMatch):
+    return find_matching_edge(tiles, edgeToMatch, lambda tile: tile.left_border() )
 
-            tile.flip_v()
-            if tile.top_border() == edgeToMatch: return tile
-            tile.flip_v()
-
-            tile.rotate()        
-        
-    return None    
+def find_matching_top_edge(tiles, edgeToMatch):
+    return find_matching_edge(tiles, edgeToMatch, lambda tile: tile.top_border() )
 
 def complete_row(row, gridSize, remainingTiles):
     for i in range(0, gridSize - 1):
         edge_to_match = row[i].right_border()
-        nextTile = find_match_left_edge(remainingTiles, edge_to_match)
+        nextTile = find_matching_left_edge(remainingTiles, edge_to_match)
         row.append(nextTile)
         remainingTiles.pop(nextTile.TileId, None)
 
 def new_row(remainingTiles, grid):
     edge_to_match = grid[-1][0].bottom_border()
-    nextTile = find_match_top_edge(remainingTiles, edge_to_match)
+    nextTile = find_matching_top_edge(remainingTiles, edge_to_match)
     row = [nextTile]
     grid.append(row)
     remainingTiles.pop(nextTile.TileId, None)            
@@ -139,28 +118,24 @@ def combine_tiles(grid, gridSize):
 
     return image
 
+def pattern_matches(line, pattern):
+    return all([pattern[i] != "#" or line[i] == '#' for i in range(len(pattern))])
+
 def check_for_monster(image, topLineNumber):
+    PATTERN1 = "                  # "
+    PATTERN2 = "#    ##    ##    ###"
+    PATTERN3 = " #  #  #  #  #  #   "
 
     topLine = ''.join(image[topLineNumber])
     middleLine = ''.join(image[topLineNumber + 1])
     bottomLine = ''.join(image[topLineNumber + 2])
 
-    offset = 0
-    while offset + 20 < len(topLine):
-        if middleLine[offset] == '#' and middleLine[offset + 5: offset + 7] == '##' and middleLine[offset + 11: offset + 13] == '##' and middleLine[offset + 17: offset + 20] == '###':
-            if topLine[offset+18] == '#':
-                if bottomLine[offset+1] == '#' and bottomLine[offset+4] == '#' and bottomLine[offset+7] == '#' and bottomLine[offset+10] == '#' and bottomLine[offset+13] == '#' and bottomLine[offset+16] == '#':
-                    return True     
-        offset += 1
+    return any([pattern_matches(topLine[offset:], PATTERN1) and \
+                pattern_matches(middleLine[offset:], PATTERN2) and \
+                pattern_matches(bottomLine[offset:], PATTERN3) for offset in range(len(topLine) - len(PATTERN1))])
 
-def count_monsters(image):
-    topLineNumber = 0
-    result = 0
-    while topLineNumber < len(image) - 2:
-        if check_for_monster(image, topLineNumber):
-            result +=1
-        topLineNumber += 1    
-    return result
+def count_monsters_in_image(image):
+    return sum([1 for topLineNumber in range(len(image) - 2) if check_for_monster(image, topLineNumber)])
 
 def arrange_tiles(tiles, gridSize):
     grid = []
@@ -179,16 +154,12 @@ def arrange_tiles(tiles, gridSize):
     return grid
 
 def find_monsters(image):
-    for _ in range(5):
-        count = count_monsters(image)
-        if count != 0: return count
-        image = list(zip(*image[::-1]))
-
-    image = image[::-1]
-    for _ in range(5):
-        count = count_monsters(image)
-        if count != 0: return count
-        image = list(zip(*image[::-1]))        
+    for _ in range(2):
+        for _ in range(4):
+            count = count_monsters_in_image(image)
+            if count != 0: return count
+            image = list(zip(*image[::-1]))
+        image = image[::-1]
 
 def part_one():
     tiles = read_file()
