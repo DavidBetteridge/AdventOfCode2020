@@ -45,6 +45,8 @@ class Tile:
                  self.right_border(), self.right_border()[::-1] 
                ])
 
+    def remove_border(self):
+        self.Lines = [ l[1:-1]  for l in self.Lines[1:-1] ]
 
 def read_file():
     lines =  open('Day20/day20.txt').read().splitlines()
@@ -134,6 +136,23 @@ def new_row(remainingTiles, grid):
     remainingTiles.pop(nextTile.TileId, None)            
     return row
 
+def remove_all_borders(grid):
+    for rowNumber in range(gridSize):
+        for columnNumber in range(gridSize):
+            grid[rowNumber][columnNumber].remove_border()        
+
+def combine_tiles(grid, gridSize):
+    image = []
+    for rowNumber in range(gridSize):
+        for y in range(8):
+            row = ""
+            for columnNumber in range(gridSize):
+                row += ''.join(grid[rowNumber][columnNumber].Lines[y])
+            
+            image.append(row)
+
+    return image
+
 tiles = read_file()
 
 grid = []
@@ -149,3 +168,10 @@ complete_row(row, gridSize, tiles)
 for _ in range(gridSize - 1):
     row = new_row(tiles, grid)
     complete_row(row, gridSize, tiles)
+
+remove_all_borders(grid)
+image = combine_tiles(grid, gridSize)
+
+
+for r in image:
+    print(r)
