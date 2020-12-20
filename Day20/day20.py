@@ -172,6 +172,41 @@ for _ in range(gridSize - 1):
 remove_all_borders(grid)
 image = combine_tiles(grid, gridSize)
 
+def check_for_monster(image, topLineNumber):
 
-for r in image:
-    print(r)
+    topLine = ''.join(image[topLineNumber])
+    middleLine = ''.join(image[topLineNumber + 1])
+    bottomLine = ''.join(image[topLineNumber + 2])
+
+    offset = 0
+    while offset + 20 < len(topLine):
+        if middleLine[offset] == '#' and middleLine[offset + 5: offset + 7] == '##' and middleLine[offset + 11: offset + 13] == '##' and middleLine[offset + 17: offset + 20] == '###':
+            if topLine[offset+18] == '#':
+                if bottomLine[offset+1] == '#' and bottomLine[offset+4] == '#' and bottomLine[offset+7] == '#' and bottomLine[offset+10] == '#' and bottomLine[offset+13] == '#' and bottomLine[offset+16] == '#':
+                    return True     
+        offset += 1
+
+
+def count_monsters(image):
+    topLineNumber = 0
+    result = 0
+    while topLineNumber < len(image) - 2:
+        if check_for_monster(image, topLineNumber):
+            result +=1
+        topLineNumber += 1    
+    return result
+
+for _ in range(5):
+    print(count_monsters(image))
+    image = list(zip(*image[::-1]))
+
+image = image[::-1]
+for _ in range(5):
+    print(count_monsters(image))
+    image = list(zip(*image[::-1]))
+
+result = 0
+for line in image:
+    result += line.count('#')
+
+print(result -(21 * 15))
