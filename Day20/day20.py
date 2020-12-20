@@ -71,20 +71,6 @@ def find_matches(tiles, tile, edge):
                 result.append(otherTile.TileId)
     return result
 
-def part_one():
-    tiles = read_file()
-
-    result = 1
-    for tile in tiles:
-        matches = []
-        matches += find_matches(tiles, tile, tile.top_border())
-        matches += find_matches(tiles, tile, tile.bottom_border())
-        matches += find_matches(tiles, tile, tile.left_border())
-        matches += find_matches(tiles, tile, tile.right_border())                
-        if len(matches) == 2:
-            result *= tile.TileId
-    return result
-
 def find_top_left_corner(tiles):
     for tile in tiles.values():
         if len(find_matches(tiles, tile, tile.top_border())) == 0 and len(find_matches(tiles, tile, tile.left_border())) == 0:
@@ -137,9 +123,9 @@ def new_row(remainingTiles, grid):
     return row
 
 def remove_all_borders(grid):
-    for rowNumber in range(gridSize):
-        for columnNumber in range(gridSize):
-            grid[rowNumber][columnNumber].remove_border()        
+    for row in grid:
+        for cell in row:
+            cell.remove_border()
 
 def combine_tiles(grid, gridSize):
     image = []
@@ -152,25 +138,6 @@ def combine_tiles(grid, gridSize):
             image.append(row)
 
     return image
-
-tiles = read_file()
-
-grid = []
-gridSize = int(math.sqrt(len(tiles)))
-
-topLeft = find_top_left_corner(tiles)
-tiles.pop(topLeft.TileId, None)
-
-row = [topLeft]
-grid.append(row)
-complete_row(row, gridSize, tiles)
-
-for _ in range(gridSize - 1):
-    row = new_row(tiles, grid)
-    complete_row(row, gridSize, tiles)
-
-remove_all_borders(grid)
-image = combine_tiles(grid, gridSize)
 
 def check_for_monster(image, topLineNumber):
 
@@ -186,7 +153,6 @@ def check_for_monster(image, topLineNumber):
                     return True     
         offset += 1
 
-
 def count_monsters(image):
     topLineNumber = 0
     result = 0
@@ -196,17 +162,53 @@ def count_monsters(image):
         topLineNumber += 1    
     return result
 
-for _ in range(5):
-    print(count_monsters(image))
-    image = list(zip(*image[::-1]))
+def arrange_tiles(tiles, gridSize):
+    grid = []
 
-image = image[::-1]
-for _ in range(5):
-    print(count_monsters(image))
-    image = list(zip(*image[::-1]))
+    topLeft = find_top_left_corner(tiles)
+    tiles.pop(topLeft.TileId, None)
 
-result = 0
-for line in image:
-    result += line.count('#')
+    row = [topLeft]
+    grid.append(row)
+    complete_row(row, gridSize, tiles)
 
-print(result -(21 * 15))
+    for _ in range(gridSize - 1):
+        row = new_row(tiles, grid)
+        complete_row(row, gridSize, tiles)
+
+    return grid
+
+def find_monsters(image):
+    for _ in range(5):
+        count = count_monsters(image)
+        if count != 0: return count
+        image = list(zip(*image[::-1]))
+
+    image = image[::-1]
+    for _ in range(5):
+        count = count_monsters(image)
+        if count != 0: return count
+        image = list(zip(*image[::-1]))        
+
+def part_one():
+    tiles = read_file()
+    gridSize = int(math.sqrt(len(tiles)))
+    grid = arrange_tiles(tiles, gridSize)
+
+    return grid[0][0].TileId * grid[0][-1].TileId * grid[-1][0].TileId * grid[-1][-1].TileId
+
+def part_two():
+    tiles = read_file()
+    gridSize = int(math.sqrt(len(tiles)))
+    grid = arrange_tiles(tiles, gridSize)
+
+    remove_all_borders(grid)
+    image = combine_tiles(grid, gridSize)
+
+    monsterCount = find_monsters(image)
+
+    result = sum([line.count('#') for line in image]) - (monsterCount * 15)
+    return result 
+
+print(part_one())    
+print(part_two())    
