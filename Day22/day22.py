@@ -19,10 +19,9 @@ def read_file():
 def score_pack(pack):
     return sum([card * (len(pack) - i) for i, card in enumerate(pack)])
 
-
 def part_one():
     pack1, pack2 = read_file()
-    while len(pack1) > 0 and len(pack2) > 0:
+    while pack1 and pack2:
         top1 = pack1[0]
         pack1 = pack1[1:]
         top2 = pack2[0]
@@ -35,21 +34,16 @@ def part_one():
             pack2.append(top2)
             pack2.append(top1)            
 
-    if len(pack1) > 0:
+    if pack1:
         return score_pack(pack1)
     else:
         return score_pack(pack2)            
 
-def part_two(pack1, pack2):
-    roundNumber = 0
-
+def play_game(pack1, pack2):
     previousRounds = set()
-
-    while len(pack1) > 0 and len(pack2) > 0:
-        roundNumber += 1
-
-        s1 = ''.join(map(str,pack1))
-        s2 = ''.join(map(str,pack2))
+    while pack1 and pack2:
+        s1 = tuple(pack1)
+        s2 = tuple(pack2)
         key = (s1, s2)
         if key in previousRounds:
             return (pack1,[])
@@ -64,8 +58,8 @@ def part_two(pack1, pack2):
         if len(pack1) >= top1 and len(pack2) >= top2:
             subPack1 = pack1[0:top1]
             subPack2 = pack2[0:top2]
-            _, r2 = part_two(subPack1, subPack2)
-            player1Won = len(r2) == 0
+            r1, _ = play_game(subPack1, subPack2)
+            player1Won = len(r1) != 0
 
         elif top1 > top2:
             player1Won = True
@@ -79,14 +73,18 @@ def part_two(pack1, pack2):
             pack2.append(top2)
             pack2.append(top1)                
 
-        if len(pack1) == 0 or len(pack2) == 0:
+        if not pack1 or not pack2:
             return (pack1, pack2)
 
-# print(part_one())
+def part_two():
+    pack1, pack2 = read_file()
+    pack1, pack2 = play_game(pack1, pack2)
+    if pack1:
+        return score_pack(pack1)
+    else:
+        return score_pack(pack2)
 
-pack1, pack2 = read_file()
-pack1, pack2 = part_two(pack1, pack2)
-if len(pack1) > 0:
-    print(score_pack(pack1))
-else:
-    print(score_pack(pack2))
+
+print(part_one())
+print(part_two())
+
