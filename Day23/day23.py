@@ -1,80 +1,82 @@
-def display_cups(currentCup, cups):
-    s = "(" + str(currentCup) + ")"
-    c = cups[currentCup]
-    while c != currentCup:
-        s += "," + str(c)
-        c = cups[c]
-    print('cups:', s)
+import time
 
-numberOfCups = 1000000
-cups = [i+1 for i in range(numberOfCups+1)]
-cups[6] = 5
-cups[5] = 3
-cups[3] = 4
-cups[4] = 2
-cups[2] = 7
-cups[7] = 9
-cups[9] = 1
-cups[1] = 8
-cups[8] = 10
-currentCup = 6
+def cups_for_part_one():
+    numberOfCups = 9
+    cups = [i+1 for i in range(numberOfCups+1)]
+    cups[6] = 5
+    cups[5] = 3
+    cups[3] = 4
+    cups[4] = 2
+    cups[2] = 7
+    cups[7] = 9
+    cups[9] = 1
+    cups[1] = 8
+    cups[8] = 6
+    currentCup = 6
+    return (currentCup, cups)
 
+def cups_for_part_two():
+    numberOfCups = 1000000
+    cups = [i+1 for i in range(numberOfCups+1)]
+    cups[6] = 5
+    cups[5] = 3
+    cups[3] = 4
+    cups[4] = 2
+    cups[2] = 7
+    cups[7] = 9
+    cups[9] = 1
+    cups[1] = 8
+    cups[8] = 10
+    currentCup = 6
+    cups[-1] = currentCup
+    return (currentCup, cups)
 
-# cups[3] = 8
-# cups[8] = 9
-# cups[9] = 1
-# cups[1] = 2
-# cups[2] = 5
-# cups[5] = 4
-# cups[4] = 6
-# cups[6] = 7
-# cups[7] = 10
-# currentCup = 3
+def play(numberOfMoves, cups, currentCup):
+    highestCup = max(cups)
 
-cups[-1] = currentCup
+    for _ in range(numberOfMoves):
+        p1 = cups[currentCup]
+        p2 = cups[p1]
+        p3 = cups[p2]
+        
+        destinationCup = currentCup - 1
+        if destinationCup < 1: destinationCup = highestCup
+        while destinationCup in [p1,p2,p3]:
+            destinationCup -= 1
+            if destinationCup < 1: destinationCup = highestCup
 
-highestLabel = max(cups)
-moveNumber = 0
+        cups[currentCup] = cups[p3]
 
-for _ in range(10000000):
-    #moveNumber += 1
-    #print(f'-- move{moveNumber} --')
+        cups[p3] = cups[destinationCup]
+        cups[destinationCup] = p1
 
-    #display_cups(currentCup, cups)
+        currentCup = cups[currentCup]
 
-    pickup = [cups[currentCup], cups[cups[currentCup]], cups[cups[cups[currentCup]]]]
+def time_it(func):
+    def wrapper():
+        tic = time.perf_counter()
+        result = func()
+        toc = time.perf_counter()
+        print(f"Solved in {toc - tic:0.4f} seconds")   
+        return result
+    return wrapper
 
-    #print('pick up:', ' '.join([str(c) for c in pickup]))
-
-    destinationCup = currentCup - 1
-    if destinationCup < 1: destinationCup = highestLabel
-    while destinationCup in pickup:
-        destinationCup -= 1
-        if destinationCup < 1: destinationCup = highestLabel
-
-    # print('destination:', destinationCup)
-    # print('')
-
-    cups[currentCup] = cups[cups[cups[cups[currentCup]]]] #Removed
-
-    next = cups[destinationCup]
-    cups[destinationCup] = pickup[0]
-    cups[pickup[-1]] = next
-
-    currentCup = cups[currentCup]
-
+@time_it
 def part_one():
+    currentCup, cups = cups_for_part_one()
+    play(100, cups, currentCup)
     result = ""
     i = cups[1]
     while i != 1:
         result += str(i)
         i = cups[i]
-    print(result)    
+    return result
 
-print(cups[1])
-print(cups[cups[1]])
-print(cups[1] * cups[cups[1]])
+@time_it
+def part_two():
+    currentCup, cups = cups_for_part_two()
+    play(10000000, cups, currentCup)
+    return cups[1] * cups[cups[1]]
 
-
-#cups = [6,5,3,4,2,7,9,1,8]
-#76952348
+print(part_one())    #76952348
+print(part_two())    #72772522064     16.6864 seconds

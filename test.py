@@ -1,26 +1,7 @@
-import tkinter as tk
+import time
 
-win = tk.Tk()
-
-win.title("Test")
-win.resizable(False, False)
-win.mainloop()
-
-
-
-pcmichaels@live.com.
-
-
-Hi Paul,
-
-Could I have
-
-https://www.packtpub.com/product/python-gui-programming-cookbook-third-edition/9781838827540
-
-thank you
-
-Regards
-
-David
-
-
+tic = time.perf_counter()
+for _ in range(10000000):
+    pass
+toc = time.perf_counter()
+print(f"Played in in {toc - tic:0.4f} seconds")
