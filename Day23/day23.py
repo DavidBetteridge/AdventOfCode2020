@@ -1,47 +1,80 @@
-def format_cup(currentCup, cup):
-    if currentCup == cup:
-        return f'({cup})'
-    else:
-        return str(cup)
+def display_cups(currentCup, cups):
+    s = "(" + str(currentCup) + ")"
+    c = cups[currentCup]
+    while c != currentCup:
+        s += "," + str(c)
+        c = cups[c]
+    print('cups:', s)
 
-cups = [6,5,3,4,2,7,9,1,8]
-#cups = [3,8,9,1,2,5,4,6,7]
-currentCupIndex = 0
-lowestLabel = min(cups)
+numberOfCups = 1000000
+cups = [i+1 for i in range(numberOfCups+1)]
+cups[6] = 5
+cups[5] = 3
+cups[3] = 4
+cups[4] = 2
+cups[2] = 7
+cups[7] = 9
+cups[9] = 1
+cups[1] = 8
+cups[8] = 10
+currentCup = 6
+
+
+# cups[3] = 8
+# cups[8] = 9
+# cups[9] = 1
+# cups[1] = 2
+# cups[2] = 5
+# cups[5] = 4
+# cups[4] = 6
+# cups[6] = 7
+# cups[7] = 10
+# currentCup = 3
+
+cups[-1] = currentCup
+
 highestLabel = max(cups)
 moveNumber = 0
 
-for _ in range(100):
-    moveNumber += 1
-    print(f'-- move{moveNumber} --')
+for _ in range(10000000):
+    #moveNumber += 1
+    #print(f'-- move{moveNumber} --')
 
-    currentCup = cups[currentCupIndex]
-    print('cups:', ' '.join([format_cup(currentCup, c) for c in cups]))
+    #display_cups(currentCup, cups)
 
-    pickup = (cups + cups)[currentCupIndex+1:currentCupIndex+4]
-    print('pick up:', ' '.join([str(c) for c in pickup]))
+    pickup = [cups[currentCup], cups[cups[currentCup]], cups[cups[cups[currentCup]]]]
+
+    #print('pick up:', ' '.join([str(c) for c in pickup]))
 
     destinationCup = currentCup - 1
-    if destinationCup < lowestLabel: destinationCup = highestLabel
+    if destinationCup < 1: destinationCup = highestLabel
     while destinationCup in pickup:
         destinationCup -= 1
-        if destinationCup < lowestLabel: destinationCup = highestLabel
+        if destinationCup < 1: destinationCup = highestLabel
 
-    print('destination:', destinationCup)
-    print('')
+    # print('destination:', destinationCup)
+    # print('')
 
-    for p in pickup:
-        cups.remove(p)
+    cups[currentCup] = cups[cups[cups[cups[currentCup]]]] #Removed
 
-    destinationCupIndex = cups.index(destinationCup)
+    next = cups[destinationCup]
+    cups[destinationCup] = pickup[0]
+    cups[pickup[-1]] = next
 
-    cups = cups[:destinationCupIndex+1] + pickup + cups[destinationCupIndex+1:]
+    currentCup = cups[currentCup]
 
-    currentCupIndex = (cups.index(currentCup) + 1) % len(cups)
+def part_one():
+    result = ""
+    i = cups[1]
+    while i != 1:
+        result += str(i)
+        i = cups[i]
+    print(result)    
 
-result = ""
-i = cups.index(1)
-for _ in range(len(cups)-1):
-    i = (i + 1) % len(cups)
-    result += str(cups[i])
-print(result)    
+print(cups[1])
+print(cups[cups[1]])
+print(cups[1] * cups[cups[1]])
+
+
+#cups = [6,5,3,4,2,7,9,1,8]
+#76952348
