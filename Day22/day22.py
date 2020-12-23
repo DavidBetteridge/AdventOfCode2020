@@ -1,4 +1,4 @@
-import re
+import time
 
 def read_file():
     pack1 = []
@@ -39,6 +39,8 @@ def part_one():
     else:
         return score_pack(pack2)            
 
+rounds=0
+games=0        
 def play_game(pack1, pack2):
     previousRounds = set()
     while pack1 and pack2:
@@ -58,8 +60,14 @@ def play_game(pack1, pack2):
         if len(pack1) >= top1 and len(pack2) >= top2:
             subPack1 = pack1[0:top1]
             subPack2 = pack2[0:top2]
-            r1, _ = play_game(subPack1, subPack2)
-            player1Won = len(r1) != 0
+
+            m1 = max(subPack1)
+            m2 = max(subPack2)
+            if (m1 > m2) and (m1 > len(subPack1) + len(subPack2)):
+                player1Won = True
+            else:
+                r1, _ = play_game(subPack1, subPack2)
+                player1Won = len(r1) != 0
 
         elif top1 > top2:
             player1Won = True
@@ -86,5 +94,16 @@ def part_two():
 
 
 print(part_one())
-print(part_two())
 
+tic = time.perf_counter()
+print(part_two())
+toc = time.perf_counter()
+print(f"Solved part 2 in {toc - tic:0.4f} seconds")
+
+print(f'Rounds: {rounds}')
+print(f'Games: {games}')
+
+
+# Rounds: 1116180
+# Games: 12245
+#Solved part 2 in 4.6954 seconds
