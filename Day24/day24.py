@@ -42,12 +42,12 @@ def layout_tiles():
             tiles[tile] = True
         else:
             tiles[tile] = not tiles[tile]
-    return tiles
+    return set([tile for tile in tiles if tiles[tile]])
     
 
 def part_one():
     tiles = layout_tiles()
-    return sum([1 for tile in tiles if tiles[tile]])
+    return len(tiles)
 
 def part_two():
     tiles = layout_tiles()
@@ -61,36 +61,36 @@ def part_two():
         minZ = min([tile[2] for tile in tiles])
         maxZ = max([tile[2] for tile in tiles])
 
-        newTiles = {}
+        newTiles = set()
 
         for x in range(minX-2,maxX+2):
             for y in range(minY-2,maxY+2):
                 for z in range(minZ-2,maxZ+2):
                     count = 0
-                    if (x+1,y-1,z) in tiles and tiles[(x+1,y-1,z)]:  #e
+                    if (x+1,y-1,z) in tiles:  #e
                         count+=1
-                    if (x-1,y+1,z) in tiles and tiles[(x-1,y+1,z)]:  #w
+                    if (x-1,y+1,z) in tiles:  #w
                         count+=1
-                    if (x,y+1,z-1) in tiles and tiles[(x,y+1,z-1)]:  #nw
+                    if (x,y+1,z-1) in tiles:  #nw
                         count+=1
-                    if (x+1,y,z-1) in tiles and tiles[(x+1,y,z-1)]:  #ne
+                    if (x+1,y,z-1) in tiles:  #ne
                         count+=1
-                    if (x,y-1,z+1) in tiles and tiles[(x,y-1,z+1)]:  #se
+                    if (x,y-1,z+1) in tiles:  #se
                         count+=1                    
-                    if (x-1,y,z+1) in tiles and tiles[(x-1,y,z+1)]:  #sw
+                    if (x-1,y,z+1) in tiles:  #sw
                         count+=1    
 
-                    isCurrentlyBlack = (x,y,z) in tiles and tiles[(x,y,z)]
+                    isCurrentlyBlack = (x,y,z) in tiles
 
                     if isCurrentlyBlack and (count == 0 or count > 2):
                         pass
                     elif not isCurrentlyBlack and (count == 2):
-                        newTiles[(x,y,z)] = True            
+                        newTiles.add((x,y,z))
                     elif isCurrentlyBlack:
-                        newTiles[(x,y,z)] = True 
+                        newTiles.add((x,y,z))
         tiles = newTiles
-        print(day+1, sum([1 for tile in tiles if tiles[tile]]))
-    return sum([1 for tile in tiles if tiles[tile]])
+        print(day+1, len(tiles))
+    return len(tiles)
 
 
 print(part_one())
