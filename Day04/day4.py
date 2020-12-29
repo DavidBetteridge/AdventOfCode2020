@@ -32,17 +32,9 @@ VALIDATIONS = {
 }
 
 def load_documents() :
-    documents = []
-    currentDocument = ""
-    for line in open('Day04/day4.txt').read().splitlines():
-        if (line == ""):
-            documents.append(currentDocument)
-            currentDocument = ""
-        else:
-            currentDocument = currentDocument + " " + line
-    documents.append(currentDocument)
+    documents = open('Day04/day4.txt').read().split('\n\n')
+    return [document.replace('\n',' ') for document in documents]
 
-    return documents 
 
 def field_in_document(document, fieldType):
     return (fieldType + ':' in document)

@@ -5,3 +5,6 @@ def part_one():
 
 def part_two():    
     return next((seatId for seatId in range(min(seatIds), max(seatIds)) if (not seatId in seatIds)), None)
+
+
+print(part_two())

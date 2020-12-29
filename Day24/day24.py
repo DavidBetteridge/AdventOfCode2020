@@ -14,11 +14,10 @@ def time_it(what):
 
 def layout_tiles():
     tiles = {}
-    lines = open('Day24/day24.txt').read().splitlines()
+    lines = open('C:/personal/AdventOfCode2020/Day24/day24.txt').read().splitlines()
     for line in lines:
-        x = 0
-        y = 0
-        z = 0
+        x = 4000
+        y = 4000
         index = 0
 
         while index < len(line):
@@ -32,26 +31,22 @@ def layout_tiles():
 
             if move == 'e':
                 x += 1
-                y -= 1
             elif move == 'w':
                 x -= 1
-                y += 1
             elif move == 'nw':
-                z -= 1
                 y += 1
             elif move == 'ne':
                 x += 1
-                z -= 1
+                y += 1
             elif move == 'sw':
                 x -= 1
-                z += 1
+                y -= 1
             elif move == 'se':
-                z += 1
                 y -= 1
             else:
                 print(f'Unknown move {move}')
         
-        tile = (x, y, z)
+        tile = (x << 16) | y
         if tile not in tiles:
             tiles[tile] = True
         else:
@@ -63,53 +58,45 @@ def part_one():
     tiles = layout_tiles()
     return len(tiles)
 
-def next_generation(x, y, z, tiles, newTiles, checked):
-    checked.add((x,y,z))
-
-    count = 0
-    if (x+1,y-1,z) in tiles:  #e
-        count+=1
-    if (x-1,y+1,z) in tiles:  #w
-        count+=1
-    if (x,y+1,z-1) in tiles:  #nw
-        count+=1
-    if (x+1,y,z-1) in tiles:  #ne
-        count+=1
-    if (x,y-1,z+1) in tiles:  #se
-        count+=1                    
-    if (x-1,y,z+1) in tiles:  #sw
-        count+=1    
-
-    isCurrentlyBlack = (x,y,z) in tiles
-
-    if isCurrentlyBlack and (count == 0 or count > 2):
-        pass
-    elif not isCurrentlyBlack and (count == 2):
-        newTiles.add((x,y,z))
-    elif isCurrentlyBlack:
-        newTiles.add((x,y,z))
 
 @time_it("Part Two")
 def part_two():
     tiles = layout_tiles()
+    offsetsToCheck = [(0,0), (1,0), (-1,0), (0,1), (1,1), (0,-1), (-1,-1)]
+    neighboursToCount = [(1,0), (-1,0), (0,1), (1,1), (0,-1), (-1,-1)]
 
     for _ in range(100):
         newTiles = set()
         checked = set()
         for blackTile in tiles:
-            (x,y,z) = blackTile
-            if not (x,y,z) in checked: next_generation(x,y,z, tiles, newTiles, checked)
-            if not (x+1,y-1,z) in checked: next_generation(x+1,y-1,z, tiles, newTiles, checked)
-            if not (x-1,y+1,z) in checked: next_generation(x-1,y+1,z, tiles, newTiles, checked)
-            if not (x,y+1,z-1) in checked: next_generation(x,y+1,z-1, tiles, newTiles, checked)
-            if not (x+1,y,z-1) in checked: next_generation(x+1,y,z-1, tiles, newTiles, checked)
-            if not (x,y-1,z+1) in checked: next_generation(x,y-1,z+1, tiles, newTiles, checked)
-            if not (x-1,y,z+1) in checked: next_generation(x-1,y,z+1, tiles, newTiles, checked)
+            x = blackTile >> 16
+            y = blackTile & 65535
+
+            for offsetToCheck in offsetsToCheck:
+                x1, y1 = x+offsetToCheck[0],y+offsetToCheck[1]
+                key = (x1 << 16) | y1
+                if not key in checked: 
+                    checked.add(key)
+                    count = 0
+                    for neighbourToCount in neighboursToCount:
+                        key1 = ((x1+neighbourToCount[0]) << 16) | (y1+neighbourToCount[1])
+                        if key1 in tiles:
+                            count+=1                
+
+                    isCurrentlyBlack = key in tiles
+
+                    if isCurrentlyBlack and (count == 0 or count > 2):
+                        pass
+                    elif not isCurrentlyBlack and (count == 2):
+                        newTiles.add(key)
+                    elif isCurrentlyBlack:
+                        newTiles.add(key)
+
         tiles = newTiles
     return len(tiles)
 
 
 print(part_one())  #277 Solved Part One in 0.0117 seconds
-print(part_two())  #3531 Solved Part Two in 2.5060 seconds
+print(part_two())  #3531 Solved Part Two in 2.0459 seconds
 
-cProfile.run('part_two()')
+# cProfile.run('part_two()')

@@ -25,7 +25,7 @@ def lineIsValid(str, passwordPolicy):
 
 def passwordPolicyPart1(line):
     occurs = line.password.count(line.symbol)
-    return (occurs >= line.lower and occurs <= line.upper)
+    return line.lower <= occurs <= line.upper
 
 def passwordPolicyPart2(line):
     if (line.password[line.lower - 1] == line.symbol and line.password[line.upper - 1] != line.symbol):
